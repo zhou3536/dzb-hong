@@ -27,7 +27,7 @@
         }
 
         body.is-dragging::before {
-            content: '上传文件';
+            content: '拖拽文件放入';
             position: fixed;
             inset: 20px;
             z-index: 10;
@@ -51,9 +51,9 @@
             /* min-height: 650px; */
         }
 
-        @media (min-width: 600px) {
+        @media (min-width: 500px) {
             .container {
-                width: 600px;
+                width: 500px;
             }
         }
 
@@ -63,6 +63,7 @@
             margin-bottom: 8px;
             border-bottom: 1px solid #eee;
             font-size: 20px;
+            text-align: center;
         }
 
         .form-row {
@@ -73,9 +74,9 @@
         }
 
         .form-row label {
-            width: 240px;
-            font-size: 14px;
-            font-weight: 600;
+            width: 200px;
+            /* font-size: 14px;
+            font-weight: 600; */
             color: #333;
         }
 
@@ -105,9 +106,9 @@
         }
 
         input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
             cursor: pointer;
         }
 
@@ -137,10 +138,11 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: all 0.15s ease-in-out;
         }
 
-        button:hover {
-            background-color: #0052a3;
+        button:active {
+            transform: scale(0.9);
         }
 
         button:disabled {
@@ -152,9 +154,6 @@
             background-color: #28a745;
         }
 
-        button.download-btn:hover {
-            background-color: #218838;
-        }
 
         button.download-btn:disabled {
             background-color: #94d3a2;
@@ -169,10 +168,6 @@
             margin-left: auto;
         }
 
-        button.secondary:hover {
-            background-color: #5a6268;
-        }
-
         #statusBox {
             margin-top: 18px;
             padding: 5px 6px;
@@ -180,7 +175,8 @@
             font-size: 14px;
             font-weight: 600;
             word-break: break-all;
-            /* transition: opacity 0.3s ease; */
+            background-color: #f2fbff;
+            border: 1px solid #d7e8f8;
         }
 
         #statusBox.fade-in {
@@ -220,6 +216,39 @@
                 margin-left: 0;
             }
         }
+
+        #filePreview {
+            position: fixed;
+            inset: 0;
+            background-color: #FFF;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        #filePreview.show {
+            display: flex;
+        }
+
+        #filePreview textarea {
+            border: 1px solid #bbb;
+            padding: 10px;
+            width: 100%;
+            display: block;
+            flex: 1;
+            outline: none;
+            resize: none;
+            font-size: 16px;
+            font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+        }
+
+        #filePreview button {
+            display: inline-block;
+            margin: 0 10px;
+        }
     </style>
 </head>
 
@@ -230,22 +259,21 @@
 
         <!-- 1. 上传原始文件 -->
         <div class="form-row">
-            <label for="fileInput">1. 上传原始文件：</label>
+            <label for="fileInput">上传NC文件</label>
             <div class="input-wrap">
                 <input type="file" id="fileInput">
             </div>
         </div>
-        <div class="hint" id="fileHint">选择文件后将自动处理</div>
 
         <!-- 输入框1 -->
         <div class="form-row">
-            <label for="input1">输入框1 - 循环起始标识：</label>
+            <label for="input1">换刀 - 循环起始标识</label>
             <div class="input-wrap">
                 <input type="text" id="input1" value="M06">
             </div>
         </div>
         <div class="form-row">
-            <label for="skipPreTool">预选刀智能处理：</label>
+            <label for="skipPreTool">预选刀智能处理</label>
             <div class="input-wrap">
                 <input type="checkbox" id="skipPreTool" checked>
                 <span style="font-size:13px;color:#444;">智能跳过备刀</span>
@@ -254,7 +282,7 @@
 
         <!-- 输入框2 -->
         <div class="form-row">
-            <label for="input2">输入框2 - 循环结束标识：</label>
+            <label for="input2">主轴停止 - 循环结束标识</label>
             <div class="input-wrap">
                 <input type="text" id="input2" value="M05">
             </div>
@@ -262,26 +290,24 @@
 
         <!-- 输入框3 -->
         <div class="form-row">
-            <label for="input3">输入框3 - 变量插入位置(行号)：</label>
+            <label for="input3">变量插入位置</label>
             <div class="input-wrap">
                 <input type="number" id="input3" value="3" min="0">
             </div>
         </div>
-        <div class="hint">默认在第 3 行后面插入 #1 和 #2 变量定义</div>
 
         <!-- 输入框4 -->
         <div class="form-row">
-            <label for="input4Text">输入框4 - 循环内安全回零：</label>
+            <label for="input4Text">循环内安全回零</label>
             <div class="input-wrap">
                 <input type="checkbox" id="input4Check" title="勾选启用">
                 <input type="text" id="input4Text" value="G91 G28 Z0" disabled>
             </div>
         </div>
-        <div class="hint">加工下一坐标Z轴回0</div>
 
         <!-- 输入框5 -->
         <div class="form-row">
-            <label for="input5">输入框5 - 原工件坐标系：</label>
+            <label for="input5">原工件坐标系</label>
             <div class="input-wrap">
                 <input type="text" id="input5" value="G54">
             </div>
@@ -289,7 +315,7 @@
 
         <!-- 输入框6 -->
         <div class="form-row">
-            <label for="input6">输入框6 - 起始坐标系 (#1)：</label>
+            <label for="input6">加工起始坐标系 (#1)</label>
             <div class="input-wrap">
                 <input type="number" id="input6" value="54">
             </div>
@@ -297,7 +323,7 @@
 
         <!-- 输入框7 -->
         <div class="form-row">
-            <label for="input7">输入框7 - 结束坐标系 (#2)：</label>
+            <label for="input7">加工结束坐标系 (#2)</label>
             <div class="input-wrap">
                 <input type="number" id="input7" value="55">
             </div>
@@ -307,59 +333,49 @@
         <div class="actions">
             <button type="button" id="reprocessBtn">重新处理</button>
             <button type="button" class="download-btn" id="downloadBtn" disabled>保存文件</button>
-            <button type="button" class="secondary" id="demoBtn">示例文件</button>
+            <button type="button" class="secondary" id="demoBtn">查看代码</button>
         </div>
 
         <!-- 状态与报错提示区 -->
-        <div id="statusBox" class="error">还未选择文件</div>
+        <div id="statusBox">请选择文件，或拖拽文件进来。</div>
     </div>
-
+    <div id="filePreview">
+        <textarea name="" id="fileText"></textarea>
+        <div>
+            <button id="savefileText">保存</button>
+            <button id="closeFilePreview">取消</button>
+        </div>
+    </div>
     <script>
-        // 内置的用户原始示例程序
-        const DEMO_CONTENT = `%
-                    O0001
-                    (14:47 2026/11/06)
-                    G91 G28 Z0
-                    G40 G49 G17 G80
-                    N01 (D10 D=10.00 R=0.00)
-                    T01 M06
-                    T02
-                    G00 G90 G54 X-35. Y0.0 S100 M03
-                    G43 H01 Z10. M08
-                    Z1.
-                    G01 Z-2. F1000.
-                    X-30.
-                    G02 I30. J0.0
-                    G01 X-35.
-                    Z1.
-                    G00 Z10.
-                    M05
-                    M09
-                    G91 G28 Z0
-                    M01
-                    G40 G49 G17 G80
-                    N02 (DRILLING_TOOL D=10.00 R=0.00)
-                    T02 M06
-                    T01
-                    G00 G90 G54 X0.0 Y0.0 S100 M03
-                    G43 H02 Z1. M08
-                    G98 G81 Z-5. R1. F1000.
-                    G80
-                    M05
-                    M09
-                    G91 G28 Z0
-                    G91 G28 Y0
-                    M30
-                    %`;
+
 
         const fileInput = document.getElementById('fileInput');
-        const fileHint = document.getElementById('fileHint');
         const input4Check = document.getElementById('input4Check');
         const input4Text = document.getElementById('input4Text');
         const reprocessBtn = document.getElementById('reprocessBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const demoBtn = document.getElementById('demoBtn');
         const statusBox = document.getElementById('statusBox');
+        const filePreview = document.getElementById('filePreview');
+        const fileText = document.getElementById('fileText');
+        const savefileText = document.getElementById('savefileText');
+        const closeFilePreview = document.getElementById('closeFilePreview');
+
+        demoBtn.addEventListener('click', () => {
+            if (processedOutput) {
+                filePreview.classList.add('show');
+                fileText.value = processedOutput;
+            } else {
+                showMessage('没有处理成功的代码', true);
+            }
+        })
+        closeFilePreview.addEventListener('click', () => {
+            filePreview.classList.remove('show');
+            fileText.value = '';
+        })
+        savefileText.addEventListener('click', () => {
+            triggerDownload(fileText.value, processedDownloadName);
+        })
 
         // 保存当前已读取的原始文件内容与生成结果
         let currentRawContent = '';
@@ -394,7 +410,7 @@
             downloadBtn.disabled = true;
 
             if (!currentRawContent) {
-                showMessage('报错：请先上传原始程序文件（或点击“载入示例文件”）！', true);
+                showMessage('请先上传原始程序文件（或点击“载入示例文件”）！', true);
                 return;
             }
 
@@ -421,17 +437,17 @@
             // 2. 校验原始程序中是否存在输入框1、2、5的内容
             const missingItems = [];
             if (!currentRawContent.includes(strM06)) {
-                missingItems.push('输入框1 [' + strM06 + ']');
+                missingItems.push('换刀代码 [' + strM06 + ']');
             }
             if (!currentRawContent.includes(strM05)) {
-                missingItems.push('输入框2 [' + strM05 + ']');
+                missingItems.push('主轴停止代码 [' + strM05 + ']');
             }
             if (!currentRawContent.includes(strCoord)) {
-                missingItems.push('输入框5 [' + strCoord + ']');
+                missingItems.push('原坐标代码 [' + strCoord + ']');
             }
 
             if (missingItems.length > 0) {
-                showMessage('报错：在程序中未找到 ' + missingItems.join('、') + ' 的文本，已终止处理！', true);
+                showMessage('在程序中未找到 ' + missingItems.join('、') + '，已终止！', true);
                 return;
             }
 
@@ -538,6 +554,7 @@
 
         // 浏览器离线文件下载触发器
         function triggerDownload(content, filename) {
+            if (!content || !filename) return;
             const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -594,12 +611,6 @@
                 currentRawContent = e.target.result;
                 currentOriginalName = file.name;
 
-                // 假设 fileHint 是你页面上的元素
-                if (typeof fileHint !== 'undefined') {
-                    fileHint.textContent = '当前已加载文件：' + currentOriginalName;
-                }
-
-                // 调用你现有的程序处理函数
                 processProgram();
             };
 
@@ -633,13 +644,12 @@
         });
 
         // 4. 点击“载入示例文件”按钮：方便无文件时直接测试
-        demoBtn.addEventListener('click', function () {
-            fileInput.value = '';
-            currentRawContent = DEMO_CONTENT;
-            currentOriginalName = '01.nc';
-            fileHint.textContent = '当前已加载内置示例文件：01.nc';
-            processProgram();
-        });
+        // demoBtn.addEventListener('click', function () {
+        //     fileInput.value = '';
+        //     currentRawContent = DEMO_CONTENT;
+        //     currentOriginalName = '01.nc';
+        //     processProgram();
+        // });
     </script>
 
 </body>
